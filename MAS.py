@@ -145,12 +145,22 @@ class MicrosoftAcademicScraper():
                 print(e)    
                 referenced_authors = ["Referenced authors not available"]  
                 
+            try:
+                referenced_abstract = referenced_paper.find_element_by_class_name("ma-expandable-text")
+                try:
+                    referenced_abstract.find_element_by_class_name("show-more").click()
+                except Exception as e:
+                    print(e)
+                referenced_abstract = referenced_abstract.find_element_by_class_name("text").text
+            except Exception as e:
+                print(e)
             referenced_content = {
                 "title"     : referenced_title,
                 "citations" : referenced_citations,
                 "year"      : referenced_year,
                 "pub_name"  : referenced_pub_name,
-                "authors"   : referenced_authors
+                "authors"   : referenced_authors,
+                "abstract"  : referenced_abstract
             }  
             return referenced_content
         try:
