@@ -108,17 +108,82 @@ class MicrosoftAcademicScraper():
             abstract = self.driver.find_element_by_xpath("//div[@class='caption']/following-sibling::p").text
         except Exception as e:
             print(e)  
-            abstract = "Abstract not available"      
+            abstract = "Abstract not available" 
+            
+        def get_referenced_paper(referenced_paper):
+            try:
+                referenced_title = referenced_paper.find_element_by_class_name("title").text
+            except Exception as e:
+                print(e)
+                referenced_title = "Referenced title not available"
+            try:
+                referenced_citations = referenced_paper.find_element_by_class_name("citation").text
+            except Exception as e:
+                print(e)
+                referenced_citations = "Referenced citations not available"
+            try:
+                referenced_publication = referenced_paper.find_element_by_class_name("publication")
+            except Exception as e:
+                print(e)
+            try:
+                referenced_year = referenced_publication.find_element_by_class_name("year").text
+            except Exception as e:
+                print(e)
+                referenced_year = "Referenced year not available"
+            try:
+                referenced_pub_name = referenced_publication.find_element_by_class_name("name").text
+            except Exception as e:
+                print(e)
+                referenced_pub_name = "Referenced pub name not available"
+            try:
+                referenced_authors = []
+                referenced_authors_aux = referenced_paper.find_elements_by_class_name("author-item")
+                for referenced_author_aux in referenced_authors_aux:
+                    referenced_author = referenced_author_aux.text
+                    referenced_authors.append(referenced_author)
+            except Exception as e:
+                print(e)    
+                referenced_authors = ["Referenced authors not available"]  
+                
+            referenced_content = {
+                "title"     : referenced_title,
+                "citations" : referenced_citations,
+                "year"      : referenced_year,
+                "pub_name"  : referenced_pub_name,
+                "authors"   : referenced_authors
+            }  
+            return referenced_content
+        try:
+            tabs = self.driver.find_elements_by_class_name("route")
+            for tab in tabs:
+                if "active" in tab.get_attribute("class").split():
+                    if tab.text == "REFERENCES":
+                        referenced = []
+                        referenced_papers = self.driver.find_elements_by_class_name("primary_paper")
+                        for referenced_paper in referenced_papers:
+                            referenced_content = get_referenced_paper(referenced_paper)
+                            referenced.append(referenced_content)
+                    elif tab.text == "CITED BY":
+                        referenced = ["No references"]
+                        cited_papers = self.driver.find_elements_by_class_name("primary_paper")
+                    elif tab.text == "RELATED":
+                        referenced = ["No references"]
+                        related_papers = self.driver.find_elements_by_class_name("primary_paper")   
+        except Exception as e:
+            print(e)
     
         content = {
-            "title"          : title,
-            "year"           : year,
-            "pub_name"       : pub_name,
-            "venue_details"  : venue_details,
-            "doi"            : doi,
-            "authors"        : authors,
-            "references"     : references,
-            "citations"      : citations
+            "bib" : {
+                "title"          : title,
+                "year"           : year,
+                "pub_name"       : pub_name,
+                "venue_details"  : venue_details,
+                "doi"            : doi,
+                "authors"        : authors,
+                "n_references"   : references,
+                "n_citations"    : citations
+            },
+            "references"         : referenced
         }
         return content        
             
