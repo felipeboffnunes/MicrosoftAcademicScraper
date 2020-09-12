@@ -110,17 +110,17 @@ class MicrosoftAcademicScraper():
             print(e)  
             abstract = "Abstract not available" 
             
-        def get_referenced_paper(referenced_paper):
+        def get_paper_aux(referenced_paper):
             try:
                 referenced_title = referenced_paper.find_element_by_class_name("title").text
             except Exception as e:
                 print(e)
-                referenced_title = "Referenced title not available"
+                referenced_title = "Title not available"
             try:
                 referenced_citations = referenced_paper.find_element_by_class_name("citation").text
             except Exception as e:
                 print(e)
-                referenced_citations = "Referenced citations not available"
+                referenced_citations = "Citations not available"
             try:
                 referenced_publication = referenced_paper.find_element_by_class_name("publication")
             except Exception as e:
@@ -129,12 +129,12 @@ class MicrosoftAcademicScraper():
                 referenced_year = referenced_publication.find_element_by_class_name("year").text
             except Exception as e:
                 print(e)
-                referenced_year = "Referenced year not available"
+                referenced_year = "Year not available"
             try:
                 referenced_pub_name = referenced_publication.find_element_by_class_name("name").text
             except Exception as e:
                 print(e)
-                referenced_pub_name = "Referenced pub name not available"
+                referenced_pub_name = "Pub name not available"
             try:
                 referenced_authors = []
                 referenced_authors_aux = referenced_paper.find_elements_by_class_name("author-item")
@@ -143,7 +143,7 @@ class MicrosoftAcademicScraper():
                     referenced_authors.append(referenced_author)
             except Exception as e:
                 print(e)    
-                referenced_authors = ["Referenced authors not available"]  
+                referenced_authors = ["Authors not available"]  
                 
             try:
                 referenced_abstract = referenced_paper.find_element_by_class_name("ma-expandable-text")
@@ -154,6 +154,7 @@ class MicrosoftAcademicScraper():
                 referenced_abstract = referenced_abstract.find_element_by_class_name("text").text
             except Exception as e:
                 print(e)
+                referenced_abstract = "Abstract not available"
             referenced_content = {
                 "title"     : referenced_title,
                 "citations" : referenced_citations,
@@ -171,14 +172,62 @@ class MicrosoftAcademicScraper():
                         referenced = []
                         referenced_papers = self.driver.find_elements_by_class_name("primary_paper")
                         for referenced_paper in referenced_papers:
-                            referenced_content = get_referenced_paper(referenced_paper)
+                            referenced_content = get_paper_aux(referenced_paper)
                             referenced.append(referenced_content)
+                        try:
+                            tabs = self.driver.find_elements_by_class_name("route")
+                            time.sleep(2)
+                            tabs[3].click()
+                            time.sleep(2)
+                            cited = []
+                            cited_papers = self.driver.find_elements_by_class_name("primary_paper")
+                            for cited_paper in cited_papers:
+                                cited_content = get_paper_aux(cited_paper)
+                                cited.append(cited_content)
+                        except Exception as e:
+                            print(e)
+                            cited = ["No cited"]
+                        try:
+                            tabs = self.driver.find_elements_by_class_name("route")
+                            time.sleep(2)
+                            tabs[5].click()
+                            time.sleep(2)
+                            related = []
+                            related_papers = self.driver.find_elements_by_class_name("primary_paper")
+                            for related_paper in related_papers:
+                                related_content = get_paper_aux(related_paper)
+                                related.append(related_content)
+                        except Exception as e:
+                            print(e)
+                            related = ["No related"]
                     elif tab.text == "CITED BY":
                         referenced = ["No references"]
+                        cited = []
                         cited_papers = self.driver.find_elements_by_class_name("primary_paper")
+                        for cited_paper in cited_papers:
+                            cited_content = get_paper_aux(cited_paper)
+                            cited.append(cited_content)
+                        try:
+                            tabs = self.driver.find_elements_by_class_name("route")
+                            time.sleep(2)
+                            tabs[5].click()
+                            time.sleep(2)
+                            related = []
+                            related_papers = self.driver.find_elements_by_class_name("primary_paper")
+                            for related_paper in related_papers:
+                                related_content = get_paper_aux(related_paper)
+                                related.append(related_content)
+                        except Exception as e:
+                            print(e)
+                            related = ["No related"]
                     elif tab.text == "RELATED":
                         referenced = ["No references"]
-                        related_papers = self.driver.find_elements_by_class_name("primary_paper")   
+                        cited = ["No cited"]
+                        related = []
+                        related_papers = self.driver.find_elements_by_class_name("primary_paper")
+                        for related_paper in related_papers:
+                            related_content = get_paper_aux(related_paper)
+                            related.append(related_content)   
         except Exception as e:
             print(e)
     
@@ -187,13 +236,16 @@ class MicrosoftAcademicScraper():
                 "title"          : title,
                 "year"           : year,
                 "pub_name"       : pub_name,
+                "abstract"       : abstract,
                 "venue_details"  : venue_details,
                 "doi"            : doi,
                 "authors"        : authors,
                 "n_references"   : references,
                 "n_citations"    : citations
             },
-            "references"         : referenced
+            "references"         : referenced,
+            "cited"              : cited,
+            "related"            : related
         }
         return content        
             
