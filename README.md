@@ -53,7 +53,8 @@ python main.py
 - [x] Return general information of the paper
 - [x] Generator Pattern
 - [x] Return references papers
-- [ ] Return citations papers
+- [x] Return citations papers
+- [x] Return related papers
 - [ ] Return topics of the paper
 - [ ] Query parser
 - [ ] Snowballing mode
