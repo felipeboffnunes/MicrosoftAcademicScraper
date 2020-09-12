@@ -56,18 +56,18 @@ oring for IoT Applications',
             }
             {...}
         ], 
-        'related': 
-            [
-                {
-                    'title': 'Intelligent Home Monitoring System Based on Internet of Things', 
-                    'citations': '11 citations*', 
-                    'year': '2017', 
-                    'pub_name': 'INTERNATIONAL JOURNAL OF ONLINE ENGINEERING (IJOE)', 
-                    'authors': ['Xijuan Wang'], 
-                    'abstract': 'To realize the remote monitoring ...'
-                },
-                {...}
-           ]
+    'related': 
+        [ 
+            {
+                'title': 'Intelligent Home Monitoring System Based on Internet of Things', 
+                'citations': '11 citations*', 
+                'year': '2017', 
+                'pub_name': 'INTERNATIONAL JOURNAL OF ONLINE ENGINEERING (IJOE)', 
+                'authors': ['Xijuan Wang'], 
+                'abstract': 'To realize the remote monitoring ...'
+            },
+            {...}
+       ]
  }
 ```
 
